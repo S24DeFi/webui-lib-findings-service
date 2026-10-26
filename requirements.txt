@@ -1,9 +1,9 @@
-fastapi==0.144.0
+fastapi==0.161.1
 uvicorn[standard]==0.54.0
-sqlalchemy[asyncio]==2.1.5
+sqlalchemy[asyncio]==2.1.6
 asyncpg==0.32.0
 pydantic==2.14.1
-pydantic-settings==2.16.0
+pydantic-settings==2.16.1
 
 # dev
 pytest==8.4.2
