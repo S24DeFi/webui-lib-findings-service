@@ -55,8 +55,8 @@ The API, PostgreSQL schema/migrations, adapter, dashboard, demo fixtures and tes
 suite are implemented. GitHub Actions defines PostgreSQL tests and an image build.
 This describes available code, not a claim that the latest checks have passed.
 
-The committed Makefile at planning time lacks `setup` and `e2e`, although the README
-advertises them. A local uncommitted fix exists; review and ship it separately.
+The Makefile now has `setup` and `e2e` targets, matching the README. `make setup` was
+run twice in a Linux cloud container (2026-11-02); `make e2e` has not been run.
 Docker Compose starts only PostgreSQL; the API runs separately on the host.
 Starting the database does not start the dashboard or run the tests successfully.
 
@@ -70,21 +70,23 @@ compatibility while using v2 for new integrations.
 Goal: understand a full report lifecycle before adding cloud infrastructure.
 
 - [ ] Confirm Python 3.11 and a running Docker daemon on the computer being used.
-- [ ] Review and commit the missing Makefile targets; reconcile README and context docs.
+- [ ] Confirm `make setup` works on the computer being used (the targets are committed).
 - [ ] Install dependencies, verify the disposable test database, and run `make test`.
 - [ ] Run the API and confirm health, API documentation and dashboard access.
 - [ ] Submit the synthetic fixture twice; explain why the retry creates no duplicates.
 - [ ] Inspect the relevant route, adapter and processing code while tracing one report.
 - [ ] Record actual results and failures, including the computer/environment tested.
 
-Until the setup target is committed, use these commands from the repository root:
+From the repository root:
 
 ```bash
-python3.11 -m venv .venv
-.venv/bin/python -m pip install -r requirements.txt
+make setup
 make test
 make run
 ```
+
+`make setup` creates `.venv` only if it is missing; override the interpreter with
+`make setup PYTHON=python3.11`.
 
 Reuse an existing working Python 3.11 environment rather than recreating it.
 The tests delete rows: verify the target is the project's disposable local
@@ -116,7 +118,7 @@ Troubleshooting:
 
 | Symptom | Meaning and next check |
 | --- | --- |
-| No rule to make target `setup` | Checkout lacks the target; use direct setup commands |
+| No rule to make target `setup` | Checkout predates the targets; update from `main` |
 | Docker socket missing | Docker engine is unavailable to that terminal; start Docker and check `docker info` |
 | `.venv/bin/pytest` missing | Create the Python environment and install requirements |
 | Database started but dashboard unavailable | Start `make run`; check its terminal output |
@@ -130,7 +132,7 @@ deletion is explicitly intended and authorized.
 
 - [ ] Install Node and the external a11y-audit scanner dependencies.
 - [ ] Set `A11Y_SCAN` if automatic scanner discovery does not find `scan.mjs`.
-- [ ] With the API running, execute `.venv/bin/python demo/e2e.py`.
+- [ ] With the API running (`make run`), execute `make e2e`.
 - [ ] Observe new issues, retry, fix, reopen, stale delivery, failed scan and recovery.
 - [ ] Explain the distinction between open issue state and latest scan health.
 

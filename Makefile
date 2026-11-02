@@ -1,6 +1,11 @@
 VENV := .venv/bin
+PYTHON ?= python3.11
 
-.PHONY: db test run fmt clean
+.PHONY: setup db test run e2e clean
+
+setup:         ## create the Python environment and install dependencies
+	@test -x $(VENV)/python || $(PYTHON) -m venv .venv
+	$(VENV)/python -m pip install -r requirements.txt
 
 db:            ## start Postgres and wait for it to accept connections
 	docker compose up -d
@@ -15,6 +20,9 @@ test: db
 
 run: db
 	$(VENV)/uvicorn app.main:app --reload --port 8000
+
+e2e:           ## run the scanner walkthrough against an already-running service
+	$(VENV)/python demo/e2e.py
 
 clean:
 	docker compose down -v
