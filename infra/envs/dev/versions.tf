@@ -19,7 +19,7 @@ provider "aws" {
       Project     = "findings-service"
       Environment = var.environment
       ManagedBy   = "terraform"
-      Repository  = "adswebwork/webui-lib-findings-service"
+      Repository  = "S24DeFi/webui-lib-findings-service"
     }
   }
 }

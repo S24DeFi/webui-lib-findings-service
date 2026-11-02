@@ -7,7 +7,7 @@ variable "region" {
 variable "github_repository" {
   description = "owner/repo allowed to assume the CI roles."
   type        = string
-  default     = "adswebwork/webui-lib-findings-service"
+  default     = "S24DeFi/webui-lib-findings-service"
 }
 
 variable "deploy_environment" {

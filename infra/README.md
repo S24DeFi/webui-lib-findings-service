@@ -1,7 +1,7 @@
 # AWS infrastructure (Terraform)
 
 Private learning deployment of the findings service on AWS, tracked in
-[issue #15](https://github.com/adswebwork/webui-lib-findings-service/issues/15). Nothing here
+[issue #15](https://github.com/S24DeFi/webui-lib-findings-service/issues/15). Nothing here
 has been applied yet. Provisioning, and separately any public exposure, need explicit owner
 authorization (see [AI permissions](../docs/AI_PERMISSIONS.md)).
 
