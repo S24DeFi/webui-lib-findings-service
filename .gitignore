@@ -4,3 +4,13 @@ __pycache__/
 .pytest_cache/
 .env
 .DS_Store
+
+# Terraform: providers, state and per-machine config never belong in git
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+tfplan
+crash.log
+terraform.tfvars
+backend.hcl

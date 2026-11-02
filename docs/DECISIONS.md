@@ -98,6 +98,20 @@ Compose binds Postgres to `127.0.0.1`; `/healthz` no longer returns driver error
 `config.py` docstring matches its default; the test suite refuses to run unless the
 database name ends in `_test`; the Docker image includes `migrations/`.
 
+## 11. AWS deployment: ECS Fargate, private by default
+
+Infrastructure lives in `infra/` (Terraform). The container runs on ECS Fargate behind an
+ALB, with RDS PostgreSQL 16 in isolated subnets and no NAT gateway: tasks reach AWS
+services through VPC endpoints only. Chosen over Lambda + API Gateway because the service
+holds an asyncpg pool, relies on row locks and runs advisory-locked migrations at startup;
+on Lambda each concurrent invocation would open its own connections (needing RDS Proxy) and
+migrations would need a separate step. Cost: an always-on ALB and endpoints (~$3.50/day
+while running, see `infra/README.md`). The database password is RDS-managed in Secrets
+Manager and injected at task start; `app/config.py` builds the URL from `FINDINGS_DB_*`
+parts. The ALB is internal until authentication exists; a public listener is refused
+without TLS. Nothing has been applied. *Change if:* traffic becomes spiky enough that
+idle cost dominates, or the service stops needing a persistent connection pool.
+
 ## Deferred / not done
 
 Authentication and project authorization (a `project` string is not an access boundary;
