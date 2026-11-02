@@ -166,8 +166,8 @@ Tracked in [issue #15](https://github.com/S24DeFi/webui-lib-findings-service/iss
 
 - Hosting: ECS Fargate behind an ALB with RDS PostgreSQL 16. Lambda/API Gateway was
   rejected for the first path because the connection pool, row locks and startup
-  migrations suit a long-running container. Decision 11 in `docs/DECISIONS.md` is
-  tracked on the scaffold branch, not yet on `main`.
+  migrations suit a long-running container. Decision 11 in `docs/DECISIONS.md`
+  records the choice.
 - Infrastructure as code: Terraform under `infra/`, S3 remote state.
 - Region: us-east-1. Access: Cognito JWT before any public listener.
 
@@ -216,8 +216,8 @@ AI-generated findings is deferred. If it is revisited, it needs its own decision
 - [ ] Submit a scan of a local demo page from Stewards.Digital and see it in the
   deployed dashboard.
 - [ ] Demonstrate replay, fix, reopen and a failed scan end to end.
-- [ ] Record the decision in `docs/DECISIONS.md` (number it after the scaffold's
-  decision 11 lands) and update issue #15.
+- [x] Record the decision in `docs/DECISIONS.md` (decision 12).
+- [ ] Update issue #15 to match.
 
 Limits: accessibility only, and automated results do not establish WCAG or legal
 compliance. Use synthetic or local targets until a site owner authorizes a scan.
