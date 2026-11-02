@@ -1,9 +1,10 @@
 VENV := .venv/bin
+PYTHON ?= python3.11
 
-.PHONY: setup db test run e2e fmt clean
+.PHONY: setup db test run e2e clean
 
-setup:         ## create .venv (Python 3.11) and install dependencies; reuses an existing .venv
-	test -x $(VENV)/python || python3.11 -m venv .venv
+setup:         ## create the Python environment and install dependencies
+	@test -x $(VENV)/python || $(PYTHON) -m venv .venv
 	$(VENV)/python -m pip install -r requirements.txt
 
 db:            ## start Postgres and wait for it to accept connections
@@ -20,7 +21,7 @@ test: db
 run: db
 	$(VENV)/uvicorn app.main:app --reload --port 8000
 
-e2e: db        ## real-scanner walkthrough; needs the API running (make run) and a11y-audit (A11Y_SCAN)
+e2e:           ## run the scanner walkthrough against an already-running service
 	$(VENV)/python demo/e2e.py
 
 clean:

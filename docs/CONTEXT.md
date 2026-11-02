@@ -24,13 +24,13 @@ Behavior confirmed in code but not stated in DECISIONS.md (`app/ingest_v2.py:91-
 
 | Command | Purpose | Conditions / verification |
 | --- | --- | --- |
-| `python3.11 -m venv .venv` then `.venv/bin/pip install -r requirements.txt` | Dependency setup | 2026-10-16: existing `.venv` (Python 3.11.11); `pip install -r requirements.txt` and `pip check` clean. Do not recreate an active environment unnecessarily |
+| `make setup` | Dependency setup: creates `.venv` only if absent (`PYTHON` overrides `python3.11`), then installs `requirements.txt` | 2026-10-16: equivalent direct commands on an existing `.venv` (Python 3.11.11), `pip check` clean. 2026-11-02: `make setup` run twice in a Linux cloud container, `pip check` clean |
 | `make test` | Start local PostgreSQL and run pytest | Docker daemon and verified disposable `_test` database required. 2026-10-16: 45 passed against `findings_test` on `127.0.0.1:55432` |
 | `make run` | Run uvicorn on port 8000 | Docker required. `make run` binds loopback, but the `Dockerfile` starts uvicorn on `0.0.0.0`: publish a container port only as `127.0.0.1:<port>`. 2026-10-16: listened on `127.0.0.1:8000` only; `/healthz` returned `{"status":"ok","database":"ok"}`, `/dashboard` 200; stopped after the check |
-| `.venv/bin/python demo/e2e.py` | Local demo scanner walkthrough | Service running plus external a11y-audit `scan.mjs` (found via `A11Y_SCAN` or the `~/.claude/plugins/cache` glob in `demo/e2e.py`) and Node. Not run: scanner not installed on this computer as of 2026-10-16 |
+| `make e2e` (runs `.venv/bin/python demo/e2e.py`) | Local demo scanner walkthrough | Service running plus external a11y-audit `scan.mjs` (found via `A11Y_SCAN` or the `~/.claude/plugins/cache` glob in `demo/e2e.py`) and Node. Not run: scanner not installed on this computer as of 2026-10-16 |
 | `make clean` | Remove Compose containers and volumes | Destructive; do not use as routine cleanup or delete data outside authorized disposable test resources |
 
-The local Makefile contains uncommitted `setup` and `e2e` targets at inspection time. They are not part of this documentation change and must not be presented as committed commands until independently reviewed and committed. The README advertises those targets; use the direct commands above when the committed Makefile lacks them.
+`setup` and `e2e` are committed Makefile targets (2026-11-02). `e2e` does not start Docker or the API: run `make run` first. Only `make -n e2e` expansion was checked; the walkthrough itself has not been run.
 
 ## Verification record
 
