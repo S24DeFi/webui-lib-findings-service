@@ -82,7 +82,8 @@ terraform apply          # review: 1 bucket, 1 OIDC provider, 2 roles
 # 2. Repository settings, from the bootstrap outputs
 #    Variables:  AWS_PLAN_ROLE_ARN, TF_STATE_BUCKET, AWS_REGION
 #    Environment "dev" with required reviewer(s); variable AWS_APPLY_ROLE_ARN
-#    PRs touching infra/ will now show a plan in the job summary.
+#    PRs touching infra/ will now show changed resource addresses in the job summary
+#    (full plan output is deliberately not published: the repository is public).
 
 # 3. Environment backend
 cd ../envs/dev
