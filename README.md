@@ -1,6 +1,6 @@
 # Findings service
 
-[![CI](https://github.com/adswebwork/webui-lib-findings-service/actions/workflows/ci.yml/badge.svg)](https://github.com/adswebwork/webui-lib-findings-service/actions/workflows/ci.yml)
+[![CI](https://github.com/S24DeFi/webui-lib-findings-service/actions/workflows/ci.yml/badge.svg)](https://github.com/S24DeFi/webui-lib-findings-service/actions/workflows/ci.yml)
 
 **A website issue tracker that receives automated check results, remembers recurring
 problems, and shows developers what still needs fixing.** FastAPI + PostgreSQL.
