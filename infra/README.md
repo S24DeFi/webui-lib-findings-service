@@ -91,9 +91,9 @@ cp terraform.tfvars.example terraform.tfvars
 terraform init -backend-config=backend.hcl
 ```
 
-Commit `.terraform.lock.hcl` once it is generated against the public registry for every
-platform that runs Terraform:
-`terraform providers lock -platform=linux_amd64 -platform=darwin_arm64`.
+`.terraform.lock.hcl` pins the AWS provider (6.71.0) with hashes for linux_amd64 (CI) and
+darwin_arm64 (Apple silicon). On another platform, add its hashes before init:
+`terraform providers lock -platform=linux_amd64 -platform=darwin_arm64 -platform=<yours>`.
 
 ## Deploy (manual until the deploy workflow lands)
 
