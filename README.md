@@ -20,6 +20,8 @@ or a half-finished scan never makes the project look healthier than it is.
 Open the dashboard at `http://127.0.0.1:8000/dashboard` to see current issues, filter and
 sort them, and inspect the evidence the checker supplied.
 
+For a guided local walkthrough and the AWS learning plan, see the [project roadmap](docs/ROADMAP.md).
+
 ## What is included
 
 | Piece | Where | Status |
