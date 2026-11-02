@@ -1,8 +1,11 @@
 # Findings service: understanding, operation and AWS roadmap
 
-Owner: Andre Spencer. Planning baseline: November 1, 2026.
-Repository: https://github.com/adswebwork/webui-lib-findings-service
-AWS implementation tracking: [issue #15](https://github.com/adswebwork/webui-lib-findings-service/issues/15).
+Owner: Andre. Planning baseline: November 2, 2026.
+Repository: https://github.com/S24DeFi/webui-lib-findings-service
+AWS implementation tracking: [issue #15](https://github.com/S24DeFi/webui-lib-findings-service/issues/15),
+which holds the phase checklist and the owner's hosting decisions. This roadmap
+summarizes it for learning purposes; if they disagree, the issue and the decision
+log win.
 
 ## Purpose and intended users
 
@@ -105,7 +108,9 @@ In a second terminal in the repository root:
 
 Open `/dashboard?project=learning-demo`. For a new project the fixture creates two
 issues. Repeat the exact command: expect a replay and unchanged observation counts.
-This uses existing synthetic scanner output; it does not run a real scan.
+The adapter derives each `report_id` from the project, the scan's `generated` time and
+the page URL, so re-running the same file replays the same report. This uses existing
+synthetic scanner output; it does not run a real scan.
 
 Troubleshooting:
 
@@ -135,31 +140,42 @@ merely installing the scanner or reading the walkthrough.
 
 ## Milestone 3: design the AWS transfer
 
-Tracked in [issue #15](https://github.com/adswebwork/webui-lib-findings-service/issues/15).
-Design first; hosting choice is not yet final.
+Tracked in [issue #15](https://github.com/S24DeFi/webui-lib-findings-service/issues/15)
+(phases 0-1). Decisions recorded there on 2026-11-02:
 
-- [ ] Compare a container deployment with a Lambda/API Gateway adaptation. Consider
-  existing FastAPI/Docker code, PostgreSQL connections, migrations, effort and cost.
-- [ ] Propose a managed PostgreSQL deployment and private database networking.
-- [ ] Plan API/dashboard access protection, TLS, secrets and least-privilege IAM.
-- [ ] Define region, resource inventory, estimated recurring costs, budget alerts,
-  retention, backup/restore, rollback and teardown procedures.
-- [ ] Record the selected architecture and tradeoffs in a decision document.
+- Hosting: ECS Fargate behind an ALB with RDS PostgreSQL 16. Lambda/API Gateway was
+  rejected for the first path because the connection pool, row locks and startup
+  migrations suit a long-running container. Decision 11 in `docs/DECISIONS.md` is
+  tracked on the scaffold branch, not yet on `main`.
+- Infrastructure as code: Terraform under `infra/`, S3 remote state.
+- Region: us-east-1. Access: Cognito JWT before any public listener.
+
+Remaining work:
+
+- [ ] Owner review of the resource inventory, estimated recurring cost, budget alert,
+  retention, backup/restore, rollback and teardown plan.
+- [ ] Explain the Fargate-versus-Lambda tradeoff in your own words.
 - [ ] Obtain separate owner authorization before paid provisioning or deployment.
 
 No existing production migration is assumed. Start with synthetic data and preserve
 the local workflow. Never deploy the local demonstration credentials or expose the
-current unauthenticated API unchanged.
+current unauthenticated API unchanged. The `Dockerfile` starts uvicorn on `0.0.0.0`,
+so any container run must publish its port on loopback or behind a protected load
+balancer only.
 
 ## Milestone 4: deploy and operate an authorized learning environment
 
-- [ ] Implement reproducible infrastructure and externalized configuration.
-- [ ] Deploy the protected API/dashboard and database after authorization.
-- [ ] Add CI/CD using scoped deployment identity, preferably GitHub OIDC.
+Requires separate authorization; issue #15 phases 2-5.
+
+- [ ] Apply the bootstrap and `envs/dev` stacks with synthetic data only.
+- [ ] Add CI/CD using scoped deployment identity (GitHub OIDC, no stored AWS keys).
+- [ ] Add Cognito authentication and project authorization before public exposure.
 - [ ] Verify migrations and demonstrate an application rollback and database restore.
 - [ ] Add request logs, health monitoring, metrics, alerts and bounded retention.
 - [ ] Verify retries, conflicts, concurrency, scope isolation and failed/partial/stale handling.
-- [ ] Demonstrate that unauthorized requests are denied and database access is private.
+- [ ] Demonstrate that unauthenticated requests are denied and database access is private.
+- [ ] Optional: Bedrock remediation guidance that never changes issue state, then an
+  AgentCore stretch (issue #15 phase 4).
 - [ ] Record actual cost, teardown steps and evidence from the deployed environment.
 
 ## Milestone 5: connect the work to AWS Developer learning
