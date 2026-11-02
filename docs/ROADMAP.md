@@ -22,6 +22,25 @@ its results, submit a report and inspect the dashboard. The implemented adapter
 supports accessibility results from the external a11y-audit scanner. Automated
 accessibility results do not establish WCAG or legal compliance.
 
+## Target end-to-end flow
+
+The goal is one cohesive, demonstrable pipeline, not a collection of features:
+
+1. **Audit:** Stewards.Digital (or another scanner) inspects a site.
+2. **Track:** the findings service records the findings and their lifecycle.
+3. **View:** a protected online dashboard shows live findings from the API.
+4. **Host:** the service runs on AWS, deployed and operated by Andre.
+
+Sequence: verify locally (Milestones 1-2), design and authorize AWS (3), deploy and
+protect it (4), connect a scanner (5), then map the work to certification topics (6).
+The dashboard already reads live data from `/v2/projects` and `/v2/issues`; what it
+lacks is hosting and a login. The service has no authentication, so an online
+dashboard requires the authentication work in Milestone 4 first.
+
+Out of scope for this sequence: Bedrock remediation and AgentCore (a stretch in issue
+#15, deferred until the pipeline works), real client projects, multiple tenants and
+billing. Real-site scans and public exposure each need separate authorization.
+
 ## How it works
 
 | Component | Responsibility | Source |
@@ -147,8 +166,8 @@ Tracked in [issue #15](https://github.com/S24DeFi/webui-lib-findings-service/iss
 
 - Hosting: ECS Fargate behind an ALB with RDS PostgreSQL 16. Lambda/API Gateway was
   rejected for the first path because the connection pool, row locks and startup
-  migrations suit a long-running container. Decision 11 in `docs/DECISIONS.md` is
-  tracked on the scaffold branch, not yet on `main`.
+  migrations suit a long-running container. Decision 11 in `docs/DECISIONS.md`
+  records the choice.
 - Infrastructure as code: Terraform under `infra/`, S3 remote state.
 - Region: us-east-1. Access: Cognito JWT before any public listener.
 
@@ -180,7 +199,30 @@ Requires separate authorization; issue #15 phases 2-5.
   AgentCore stretch (issue #15 phase 4).
 - [ ] Record actual cost, teardown steps and evidence from the deployed environment.
 
-## Milestone 5: connect the work to AWS Developer learning
+## Milestone 5: connect a scanner as a producer
+
+Decision (Andre, 2026-11-02): **Option A.** Stewards.Digital runs the deterministic
+axe scan for the machine-checkable accessibility layer and submits it through the
+existing adapter (`tools/a11y_adapter.py`) using the v2 contract. This works with
+today's issue identity: findings carry a stable `rule_id` and locator.
+
+Why not submit Stewards' AI-generated findings directly: they have no stable
+`rule_id` or locator, so they would not deduplicate under the identity rules in
+`docs/DECISIONS.md` (decisions 1 and 2), and inventing identifiers would make them
+look scanner-sourced. Extending the contract with a similarity-based key for
+AI-generated findings is deferred. If it is revisited, it needs its own decision.
+
+- [ ] Give the producer its own credential with write-only access (Milestone 4).
+- [ ] Submit a scan of a local demo page from Stewards.Digital and see it in the
+  deployed dashboard.
+- [ ] Demonstrate replay, fix, reopen and a failed scan end to end.
+- [x] Record the decision in `docs/DECISIONS.md` (decision 12).
+- [ ] Update issue #15 to match.
+
+Limits: accessibility only, and automated results do not establish WCAG or legal
+compliance. Use synthetic or local targets until a site owner authorizes a scan.
+
+## Milestone 6: connect the work to AWS Developer learning
 
 The immediate certification target is AWS Certified Developer – Associate.
 Solutions Architect – Associate and Generative AI Developer – Professional are

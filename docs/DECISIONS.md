@@ -112,6 +112,22 @@ parts. The ALB is internal until authentication exists; a public listener is ref
 without TLS. Nothing has been applied. *Change if:* traffic becomes spiky enough that
 idle cost dominates, or the service stops needing a persistent connection pool.
 
+## 12. Scanner producers: deterministic findings only (Stewards.Digital via axe)
+
+Decided by Andre, 2026-11-02. Stewards.Digital reaches the service through the existing
+`tools/a11y_adapter.py` and the v2 contract, using the deterministic axe scan for the
+machine-checkable accessibility layer. Every finding then carries a stable `rule_id`, so
+issue identity (decision 2) and replay (decision 3) work unchanged.
+
+Not submitted: Stewards' AI-generated findings. They have no stable `rule_id` or locator,
+so they would not deduplicate, and inventing identifiers would make them look
+scanner-sourced (the same reason legacy v1 rows were not migrated, decision 1).
+
+Consequences: accessibility only, and automated results do not establish WCAG or legal
+compliance. A producer needs its own write-only credential once authentication exists.
+*Change if:* a similarity-based key for AI-generated findings is designed and accepted as
+its own decision (deferred), or Stewards adopts deterministic checks for other categories.
+
 ## Deferred / not done
 
 Authentication and project authorization (a `project` string is not an access boundary;
