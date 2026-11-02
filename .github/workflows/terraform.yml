@@ -79,22 +79,44 @@ jobs:
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ env.TF_VERSION }}
+          # The wrapper copies command output into the step log; this job must control it.
+          terraform_wrapper: false
+
+      # Logs and job summaries of a public repository are world-readable, so the full plan
+      # (ARNs, account ID, endpoints) must never reach them. Mask the account ID, keep the
+      # plan in a file on the runner, and publish only action + resource address.
+      - name: Mask account ID
+        run: |
+          account_id="$(aws sts get-caller-identity --query Account --output text)"
+          echo "::add-mask::${account_id}"
 
       - name: Init
         run: >-
           terraform init -input=false
           -backend-config="bucket=${{ vars.TF_STATE_BUCKET }}"
           -backend-config="region=${{ vars.AWS_REGION || 'us-east-1' }}"
+          > /dev/null
 
       # The plan role is read-only, so this cannot change anything even if the PR edits
       # the Terraform to try. The tag is the PR head commit; the image need not exist yet.
+      # Output is discarded: a failure here prints only a pointer, not provider errors.
       - name: Plan
-        run: terraform plan -input=false -no-color -var "image_tag=${{ github.event.pull_request.head.sha }}" -out=tfplan
+        run: |
+          if ! terraform plan -input=false -no-color \
+              -var "image_tag=${{ github.event.pull_request.head.sha }}" \
+              -out=tfplan > plan.txt 2>&1; then
+            echo "::error::terraform plan failed. Output is withheld because this repository is public; reproduce locally with the plan role."
+            exit 1
+          fi
 
       - name: Summary
         run: |
           {
+            echo '### Plan: changed resources (addresses only)'
             echo '```'
-            terraform show -no-color tfplan | tail -c 60000
+            terraform show -json tfplan \
+              | jq -r '.resource_changes[] | select(.change.actions != ["no-op"]) | "\(.change.actions | join(",")) \(.address)"' \
+              | sort | head -n 200
             echo '```'
+            echo 'Full plan: run `terraform plan` locally; it is not published here.'
           } >> "$GITHUB_STEP_SUMMARY"
