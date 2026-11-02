@@ -1,0 +1,7 @@
+# Copy to terraform.tfvars (gitignored). No secrets belong in this file.
+image_tag = "replace-with-commit-sha"
+
+# Leave these as-is until auth (Cognito) ships and exposure is authorized:
+# public          = true
+# certificate_arn = "arn:aws:acm:us-east-1:123456789012:certificate/..."
+# allowed_cidrs   = ["203.0.113.0/24"]

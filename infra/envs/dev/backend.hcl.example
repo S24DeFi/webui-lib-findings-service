@@ -1,0 +1,3 @@
+# Copy to backend.hcl (gitignored) after running infra/bootstrap.
+bucket = "findings-tfstate-123456789012"
+region = "us-east-1"
