@@ -88,13 +88,29 @@ compatibility while using v2 for new integrations.
 
 Goal: understand a full report lifecycle before adding cloud infrastructure.
 
-- [ ] Confirm Python 3.11 and a running Docker daemon on the computer being used.
-- [ ] Confirm `make setup` works on the computer being used (the targets are committed).
-- [ ] Install dependencies, verify the disposable test database, and run `make test`.
+- [x] Confirm Python 3.11 and a running Docker daemon on the computer being used.
+- [x] Confirm `make setup` works on the computer being used (the targets are committed).
+- [x] Install dependencies, verify the disposable test database, and run `make test`.
 - [ ] Run the API and confirm health, API documentation and dashboard access.
-- [ ] Submit the synthetic fixture twice; explain why the retry creates no duplicates.
+- [x] Submit the synthetic fixture twice; the second submission replayed.
+- [ ] Explain why the retry creates no duplicates (DECISIONS 3 and 4).
 - [ ] Inspect the relevant route, adapter and processing code while tracing one report.
-- [ ] Record actual results and failures, including the computer/environment tested.
+- [x] Record actual results and failures, including the computer/environment tested.
+
+Evidence (reported by Andre, 2026-11-04; Andre's local macOS computer, Python 3.11.11):
+
+- `make setup`: completed. pip printed a notice about a newer pip release, which is not
+  an error and was left alone.
+- `make test`: passed. The pass count and macOS version were not recorded. Docker was
+  required by the `db` target; the daemon was not checked separately. The suite's own
+  guard requires a database name ending in `_test`.
+- `make run`: started and ran. Health check, `/docs` and the dashboard were not
+  individually reported, so that item stays unchecked.
+- Fixture (`demo/fixtures/scan-broken.json`, project `learning-demo`) submitted twice: the
+  second submission was a replay. The number of issues created on the first run was not
+  recorded.
+- Not run: `make e2e` and any real-scanner scan (the scanner is not installed).
+- Limits: one computer; results are Andre's report, not independently reproduced.
 
 From the repository root:
 
