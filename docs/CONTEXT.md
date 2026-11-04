@@ -38,7 +38,8 @@ Behavior confirmed in code but not stated in DECISIONS.md (`app/ingest_v2.py:91-
 - 2026-10-12: Docker daemon was unavailable; only `make -n test run` (command expansion) was checked.
 - 2026-10-16: dependency install, `make test` (45 passed), and `make run` with health/dashboard probes verified on loopback. README endpoints match the routes in `app/main.py` and `app/api_v2.py`; migrations are `0001_legacy_v1.sql` and `0002_reports_v2.sql`.
 - Docker image build is exercised by CI only; not run locally. Real-scanner e2e remains unverified.
-- External scanner installation and second-computer setup remain unverified.
+- 2026-11-04, Andre's local macOS computer (Python 3.11.11, as reported): `make setup`, `make test` (passed; count not recorded), `make run` and a two-pass fixture replay worked. Health/docs/dashboard checks were not individually reported. See the Milestone 1 evidence in [ROADMAP](ROADMAP.md).
+- External scanner installation and the real-scanner `make e2e` remain unverified.
 
 ## Fresh-session handoff trial
 
